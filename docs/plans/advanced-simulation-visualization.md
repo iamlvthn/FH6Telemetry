@@ -226,17 +226,17 @@ Performance targets:
 
 ## 7. Implementation phases
 
-### Phase 0 — Branch scaffolding *(this commit)*
+### Phase 0 — Branch scaffolding *(done)*
 - [x] Plan document
-- [ ] Empty `fh6telemetry/lab/` package with README stub
-- [ ] Milestone labels / checklist in this file
+- [x] Empty `fh6telemetry/lab/` package with README stub
+- [x] Milestone labels / checklist in this file
 
-### Phase 1 — Foundation (est. 2–3 sessions)
-- [ ] `SessionBuffer` + `TimeSeriesSample`
-- [ ] `analytics/history.py` — channel extraction helpers
-- [ ] `TimeSeriesGraph` base widget (one channel, live scroll)
-- [ ] `ScenarioEngine` interface + port `standing_launch` from current sim
-- [ ] `python -m fh6telemetry.lab` opens empty window with one graph
+### Phase 1 — Foundation *(done)*
+- [x] `SessionBuffer` + `TimeSeriesSample`
+- [x] `analytics/history.py` — channel extraction helpers
+- [x] `TimeSeriesGraph` base widget (one channel, live scroll)
+- [x] `ScenarioEngine` interface + `standing_launch` scenario
+- [x] `python -m fh6telemetry.lab` opens window with live speed graph
 
 ### Phase 2 — Simulation depth (est. 3–4 sessions)
 - [ ] Torque curve + gear model refactor
@@ -321,5 +321,5 @@ Performance targets:
 
 ---
 
-*Next action on this branch: Phase 1 — scaffold `fh6telemetry/lab/`, implement
-`SessionBuffer` and a single `TimeSeriesGraph` wired to `standing_launch`.*
+*Next action on this branch: Phase 2 — torque/gear model refactor, additional
+scenarios (`circuit_lap`, `drift_sweep`), play controls polish, and CSV export.*

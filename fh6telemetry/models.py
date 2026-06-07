@@ -210,5 +210,17 @@ class HudState:
     distance_km: float = 0.0
 
 
+@dataclass(frozen=True, slots=True)
+class TimeSeriesSample:
+    """One recorded instant for Lab graphs and session export.
+
+    ``t`` is seconds elapsed since the current session started (monotonic).
+    """
+
+    t: float
+    frame: TelemetryFrame
+    hud: HudState
+
+
 def _clamp(value: float, low: float, high: float) -> float:
     return max(low, min(high, value))

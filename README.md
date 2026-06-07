@@ -86,6 +86,19 @@ Window position and preferences are remembered in `config.local.json` in the
 working directory. Set `"window_x": -1, "window_y": -1` to re-enable the
 bottom-centre anchor on next launch.
 
+## Lab (offline analysis)
+
+The **Lab** workbench runs synthetic scenarios and plots live performance
+graphs without the game:
+
+```bash
+python -m fh6telemetry.lab
+```
+
+Click **Play** to run the *Standing launch* scenario and watch the speed trace
+update in real time. See `docs/plans/advanced-simulation-visualization.md` for
+the full roadmap.
+
 ## Testing without the game
 
 A simulator streams a believable synthetic drive so you can develop and verify

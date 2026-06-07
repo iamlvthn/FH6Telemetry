@@ -7,7 +7,10 @@ All notable changes to FH6Telemetry are documented here.
 ### Added
 - Development plan for the Advanced Simulation & Visualization Lab on branch
   `feature/advanced-sim-viz` (`docs/plans/advanced-simulation-visualization.md`).
-- Scaffold package `fh6telemetry.lab` (placeholder entry point).
+- **Lab Phase 1:** `fh6telemetry.lab` workbench with `ScenarioEngine`,
+  `StandingLaunchScenario`, `SessionBuffer`, `TimeSeriesGraph`, and live speed
+  chart (`python -m fh6telemetry.lab`).
+- `TimeSeriesSample` model, `analytics/history.py` channel extractors.
 
 ### Changed
 - Overlay layout is now a single horizontal strip (~1155×88) instead of a tall

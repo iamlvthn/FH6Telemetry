@@ -53,6 +53,11 @@ parser.parse()  ──►  TelemetryFrame  ──►  AnalyticsEngine.process() 
 | `app.py` | Wiring + thread marshalling | |
 | `__main__.py` | CLI entry point | `python -m fh6telemetry` |
 | `tools/simulator.py` | Synthetic telemetry generator | Encodes 324-byte Horizon packets |
+| `lab/` | Offline analysis workbench | Simulation + time-series graphs (Phase 1+) |
+| `lab/scenarios/` | `ScenarioEngine` + drive scenarios | `standing_launch` in Phase 1 |
+| `lab/recording/` | `SessionBuffer` ring buffer | 60 s @ 60 Hz default |
+| `lab/graphs/` | `TimeSeriesGraph` widgets | Custom-painted, live follow |
+| `analytics/history.py` | Channel extraction for graphs | speed, rpm, power, g, tyres… |
 
 ## Forza "Data Out" packet formats
 
