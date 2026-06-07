@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from .circuit_lap import CircuitLapScenario
+from .config import VehicleConfig
 from .drift_sweep import DriftSweepScenario
 from .engine import ScenarioEngine
+from .registry import build_scenario_engine
 from .standing_launch import StandingLaunchScenario
 from .vehicle import VehicleModel
 
@@ -13,5 +15,7 @@ __all__ = [
     "DriftSweepScenario",
     "ScenarioEngine",
     "StandingLaunchScenario",
+    "VehicleConfig",
     "VehicleModel",
+    "build_scenario_engine",
 ]

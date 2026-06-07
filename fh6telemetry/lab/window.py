@@ -26,12 +26,7 @@ from ..overlay import theme
 from .graphs import GraphWorkspace
 from .recording import SessionBuffer, export_session_csv, load_session_csv
 from .replay import ReplayPlayer
-from .scenarios import (
-    CircuitLapScenario,
-    DriftSweepScenario,
-    ScenarioEngine,
-    StandingLaunchScenario,
-)
+from .scenarios import ScenarioEngine, build_scenario_engine
 from .udp_bridge import UdpBridge
 from .ui import HudStripWidget, ParamsDrawerWidget, StatsPanelWidget
 
@@ -41,16 +36,6 @@ _SPEED_OPTIONS = [
     ("2×", 2.0),
     ("4×", 4.0),
 ]
-
-
-def _default_scenarios() -> ScenarioEngine:
-    return ScenarioEngine(
-        [
-            StandingLaunchScenario(),
-            CircuitLapScenario(),
-            DriftSweepScenario(),
-        ]
-    )
 
 
 class LabWindow(QMainWindow):
@@ -63,7 +48,7 @@ class LabWindow(QMainWindow):
         super().__init__()
         self._config = config or AppConfig()
         self._engine = AnalyticsEngine(self._config)
-        self._scenario_engine = _default_scenarios()
+        self._scenario_engine = build_scenario_engine()
         self._buffer = SessionBuffer()
         self._udp = UdpBridge(host="127.0.0.1", port=self._config.port)
         self._running = False

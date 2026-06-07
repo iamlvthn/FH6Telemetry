@@ -2,48 +2,39 @@
 
 All notable changes to FH6Telemetry are documented here.
 
-## [Unreleased]
+## [0.2.0] — Lab workbench
 
 ### Added
-- Development plan for the Advanced Simulation & Visualization Lab on branch
-  `feature/advanced-sim-viz` (`docs/plans/advanced-simulation-visualization.md`).
-- **Lab Phase 1:** `fh6telemetry.lab` workbench with `ScenarioEngine`,
-  `StandingLaunchScenario`, `SessionBuffer`, `TimeSeriesGraph`, and live speed
-  chart (`python -m fh6telemetry.lab`).
-- `TimeSeriesSample` model, `analytics/history.py` channel extractors.
-- **Lab Phase 2:** `VehicleModel` with torque curve, `circuit_lap` and
-  `drift_sweep` scenarios, simulation speed multiplier, CSV session export.
-- **Lab Phase 3:** `GraphWorkspace` with 2×2 charts (speed, power/RPM, g-force,
-  tyres), delta/balance row, timeline scrubber, follow-live toggle, dual-axis
-  graphs and shift markers.
-- **Lab Phase 4:** embedded HUD strip, session stats sidebar, scenario parameter
-  drawer, CSV load/replay, A/B speed compare overlay, UDP bridge to overlay.
+- **`fh6telemetry.lab`** — offline simulation and visualization workbench
+  (`python -m fh6telemetry.lab`).
+- `ScenarioEngine` with `standing_launch`, `circuit_lap`, and `drift_sweep`
+  scenarios sharing a torque-curve `VehicleModel`.
+- `SessionBuffer`, CSV export/import, `ReplayPlayer`, and `TimeSeriesGraph` /
+  `GraphWorkspace` (2×2 charts, timeline scrubber, dual-axis power/RPM with shift
+  markers, delta/balance row).
+- Lab sidebar: embedded overlay HUD strip, session stats, scenario parameter
+  drawer (redline, track length, power scale).
+- CSV A/B compare overlay on the speed chart; optional **UDP bridge** to feed
+  the in-game overlay from the Lab.
+- `analytics/history.py` channel extractors; `TimeSeriesSample` model.
+- Development plan: `docs/plans/advanced-simulation-visualization.md`.
 
 ### Changed
-- Overlay layout is now a single horizontal strip (~1155×88) instead of a tall
-  multi-row grid, better suited to bottom-of-screen placement during gameplay.
-- Default window position anchors to the **bottom centre** of the primary screen
-  (24 px margin). Saved coordinates from dragging still override the anchor.
-- Tray menu adds **Reset position (bottom centre)**.
+- `tools/simulator.py` now delegates to `ScenarioEngine` (same physics as Lab);
+  adds `--scenario` flag (default `circuit_lap`).
+- Overlay layout is a single horizontal strip (~1155×88) anchored to **bottom
+  centre** of the screen (24 px margin); tray **Reset position** action.
+- Version bumped to **0.2.0**.
 
 ## [0.1.0] — Initial release
 
 ### Added
 - Multi-format Forza "Data Out" UDP decoder (Sled 232, FM7 Dash 311, Horizon
-  324, FM 2023 Dash 331) with a matching encoder used by the test simulator.
+  324, FM 2023 Dash 331) with a matching encoder.
 - Threaded UDP listener with connected/disconnected status.
-- Analytics engine with independent analysers:
-  - distance-indexed **predictive lap delta** and lap timing,
-  - power-band-learning **shift advisor** with shift light,
-  - tyre temperature classification and combined-slip readout,
-  - understeer/oversteer **handling balance**,
-  - **acceleration runs** (0-100, 0-200, 100-200, ¼-mile) and session records
-    (top speed, peak power, peak g),
-  - smoothed g-force / traction-circle data.
+- Analytics engine: predictive lap delta, shift advisor, tyre/handling analysis,
+  acceleration runs, g-force smoothing.
 - Transparent, always-on-top **PySide6 overlay** with eight compact panels.
-- Windows click-through (input pass-through), draggable/lockable positioning,
-  metric/imperial toggle, session reset and quit — via a system-tray menu.
-- CLI entry point (`python -m fh6telemetry`) with host/port/units overrides and
-  a JSON config override file.
-- `tools/simulator.py` synthetic telemetry generator for offline testing.
+- Windows click-through, tray controls, metric/imperial toggle, JSON config.
+- CLI entry point (`python -m fh6telemetry`).
 - Project documentation: `README.md`, `docs/project_context.md`.

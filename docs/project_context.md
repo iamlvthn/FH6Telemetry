@@ -52,7 +52,8 @@ parser.parse()  ──►  TelemetryFrame  ──►  AnalyticsEngine.process() 
 | `overlay/window.py` | Frameless translucent always-on-top window, tray, click-through, drag | Win32 `WS_EX_TRANSPARENT` for pass-through |
 | `app.py` | Wiring + thread marshalling | |
 | `__main__.py` | CLI entry point | `python -m fh6telemetry` |
-| `tools/simulator.py` | Synthetic telemetry generator | Encodes 324-byte Horizon packets |
+| `tools/simulator.py` | UDP adapter over `ScenarioEngine` | `--scenario` flag; shares Lab physics |
+| `lab/scenarios/registry.py` | `build_scenario_engine()` | Shared by Lab and simulator |
 | `lab/` | Offline analysis workbench | Simulation + time-series graphs (Phase 1+) |
 | `lab/scenarios/` | `ScenarioEngine` + drive scenarios | `standing_launch` in Phase 1 |
 | `lab/recording/` | `SessionBuffer` ring buffer | 60 s @ 60 Hz default |

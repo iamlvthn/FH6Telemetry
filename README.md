@@ -95,6 +95,8 @@ graphs without the game:
 python -m fh6telemetry.lab
 ```
 
+![Lab preview](docs/lab_preview.png)
+
 Click **Play** to run a scenario (*Standing launch*, *Circuit lap*, or *Drift
 sweep*). The Lab shows a live **HUD strip**, session stats, and a **2×2 graph
 grid** (speed, power/RPM with shift markers, g-force, tyre temps) plus lap delta
@@ -102,7 +104,9 @@ and handling balance. **Load CSV** replays exported sessions; **Load compare**
 overlays a second speed trace. Enable **UDP bridge** to stream telemetry to the
 in-game overlay on `127.0.0.1:5300`. Tune redline, track length and power in the
 sidebar parameter drawer.
-See `docs/plans/advanced-simulation-visualization.md` for the full roadmap.
+
+See [`docs/plans/advanced-simulation-visualization.md`](docs/plans/advanced-simulation-visualization.md)
+for design notes.
 
 ## Testing without the game
 
@@ -113,9 +117,11 @@ the full pipeline offline:
 # Terminal 1 - start the overlay
 python -m fh6telemetry --host 127.0.0.1 --port 5300
 
-# Terminal 2 - stream fake telemetry
-python -m tools.simulator --host 127.0.0.1 --port 5300
+# Terminal 2 - stream fake telemetry (same physics as the Lab)
+python -m tools.simulator --host 127.0.0.1 --port 5300 --scenario circuit_lap
 ```
+
+Scenarios: `standing_launch`, `circuit_lap` (default), `drift_sweep`.
 
 (The simulator *can* target `127.0.0.1` because it is not the game.)
 
@@ -135,7 +141,9 @@ UDP datagram ─► parser ─► TelemetryFrame ─► AnalyticsEngine ─► H
 | `fh6telemetry/models.py` | Immutable `TelemetryFrame` and `HudState` |
 | `fh6telemetry/analytics/` | Lap timing, shift advice, tyres, handling, performance |
 | `fh6telemetry/overlay/` | PySide6 panels and the overlay window |
+| `fh6telemetry/lab/` | Offline workbench: scenarios, graphs, CSV, UDP bridge |
 | `fh6telemetry/app.py` | Wires the layers and marshals threads via a Qt signal |
+| `tools/simulator.py` | Thin UDP adapter over `ScenarioEngine` |
 
 The only thread boundary is a single queued Qt signal carrying an immutable
 `HudState`, so the GUI never locks and analytics state is owned by one thread.

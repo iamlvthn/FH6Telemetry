@@ -1,7 +1,7 @@
 # Plan: Advanced Simulation & Visualization Lab
 
-**Branch:** `feature/advanced-sim-viz`  
-**Status:** Planning  
+**Branch:** merged to `main` (v0.2.0)  
+**Status:** Complete (Phases 0–5)  
 **Target:** A dedicated analysis workbench alongside the in-game overlay — richer
 physics simulation, time-series performance graphs, and a proper desktop UI for
 developing and tuning FH6Telemetry without the game running.
@@ -257,11 +257,11 @@ Performance targets:
 - [x] CSV replay + A/B session compare (orange overlay on speed chart)
 - [x] UDP bridge toggle for overlay integration testing
 
-### Phase 5 — Integration & docs
-- [ ] Update `README.md`, `project_context.md`, `changelog.md`
-- [ ] Replace `tools/simulator.py` internals with `ScenarioEngine` adapter
-- [ ] Screenshot/GIF for docs
-- [ ] Merge `feature/advanced-sim-viz` → `main`
+### Phase 5 — Integration & docs *(done)*
+- [x] Update `README.md`, `project_context.md`, `changelog.md`
+- [x] Replace `tools/simulator.py` internals with `ScenarioEngine` adapter
+- [x] Lab screenshot (`docs/lab_preview.png`)
+- [x] Merge `feature/advanced-sim-viz` → `main` (v0.2.0)
 
 ---
 
@@ -321,5 +321,5 @@ Performance targets:
 
 ---
 
-*Next action on this branch: Phase 5 — refactor `tools/simulator.py`, update
-docs/screenshots, merge `feature/advanced-sim-viz` → `main`.*
+*All planned phases complete. Future work: CSV replay scenario, 3D track map,
+car ordinal lookup table.*
