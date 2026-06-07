@@ -238,12 +238,12 @@ Performance targets:
 - [x] `ScenarioEngine` interface + `standing_launch` scenario
 - [x] `python -m fh6telemetry.lab` opens window with live speed graph
 
-### Phase 2 — Simulation depth (est. 3–4 sessions)
-- [ ] Torque curve + gear model refactor
-- [ ] `circuit_lap` and `drift_sweep` scenarios
-- [ ] Scenario picker + play/pause/speed multiplier
-- [ ] Direct-feed path into `AnalyticsEngine` (no UDP)
-- [ ] CSV export
+### Phase 2 — Simulation depth *(done)*
+- [x] Torque curve + gear model refactor (`VehicleModel`, RPM→Nm curve)
+- [x] `circuit_lap` and `drift_sweep` scenarios
+- [x] Scenario picker + play/pause + speed multiplier (0.5×–4×)
+- [x] Direct-feed path into `AnalyticsEngine` (Lab, no UDP)
+- [x] CSV export (`export_session_csv`)
 
 ### Phase 3 — Graph suite (est. 2–3 sessions)
 - [ ] Graph grid with 4 default charts
@@ -321,5 +321,5 @@ Performance targets:
 
 ---
 
-*Next action on this branch: Phase 2 — torque/gear model refactor, additional
-scenarios (`circuit_lap`, `drift_sweep`), play controls polish, and CSV export.*
+*Next action on this branch: Phase 3 — graph grid (speed, power/RPM, g-force,
+tyre temps), timeline scrubber, and dual-axis power/RPM chart.*

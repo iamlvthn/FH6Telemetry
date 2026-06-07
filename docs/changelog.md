@@ -11,6 +11,8 @@ All notable changes to FH6Telemetry are documented here.
   `StandingLaunchScenario`, `SessionBuffer`, `TimeSeriesGraph`, and live speed
   chart (`python -m fh6telemetry.lab`).
 - `TimeSeriesSample` model, `analytics/history.py` channel extractors.
+- **Lab Phase 2:** `VehicleModel` with torque curve, `circuit_lap` and
+  `drift_sweep` scenarios, simulation speed multiplier, CSV session export.
 
 ### Changed
 - Overlay layout is now a single horizontal strip (~1155×88) instead of a tall

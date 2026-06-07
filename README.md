@@ -95,9 +95,9 @@ graphs without the game:
 python -m fh6telemetry.lab
 ```
 
-Click **Play** to run the *Standing launch* scenario and watch the speed trace
-update in real time. See `docs/plans/advanced-simulation-visualization.md` for
-the full roadmap.
+Click **Play** to run a scenario (*Standing launch*, *Circuit lap*, or *Drift
+sweep*), adjust simulation speed (0.5×–4×), and export the session to CSV.
+See `docs/plans/advanced-simulation-visualization.md` for the full roadmap.
 
 ## Testing without the game
 

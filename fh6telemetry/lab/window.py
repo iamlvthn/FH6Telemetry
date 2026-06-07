@@ -2,28 +2,56 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import Qt, QTimer
+from datetime import datetime
+from pathlib import Path
+
 from PySide6.QtWidgets import (
     QComboBox,
+    QFileDialog,
     QHBoxLayout,
     QLabel,
     QMainWindow,
+    QMessageBox,
     QPushButton,
     QVBoxLayout,
     QWidget,
 )
+
+from PySide6.QtCore import QTimer
 
 from ..analytics import AnalyticsEngine
 from ..analytics.history import extract_channel
 from ..config import AppConfig
 from ..overlay import theme
 from .graphs import TimeSeriesGraph
-from .recording import SessionBuffer
-from .scenarios import ScenarioEngine, StandingLaunchScenario
+from .recording import SessionBuffer, export_session_csv
+from .scenarios import (
+    CircuitLapScenario,
+    DriftSweepScenario,
+    ScenarioEngine,
+    StandingLaunchScenario,
+)
+
+_SPEED_OPTIONS = [
+    ("0.5×", 0.5),
+    ("1×", 1.0),
+    ("2×", 2.0),
+    ("4×", 4.0),
+]
+
+
+def _default_scenarios() -> ScenarioEngine:
+    return ScenarioEngine(
+        [
+            StandingLaunchScenario(),
+            CircuitLapScenario(),
+            DriftSweepScenario(),
+        ]
+    )
 
 
 class LabWindow(QMainWindow):
-    """Desktop workbench: run a scenario and visualise speed over time."""
+    """Desktop workbench: run scenarios and visualise speed over time."""
 
     SIM_HZ = 60.0
     GRAPH_HZ = 30.0
@@ -32,10 +60,11 @@ class LabWindow(QMainWindow):
         super().__init__()
         self._config = config or AppConfig()
         self._engine = AnalyticsEngine(self._config)
-        self._scenario_engine = ScenarioEngine([StandingLaunchScenario()])
+        self._scenario_engine = _default_scenarios()
         self._buffer = SessionBuffer()
         self._running = False
-        self._dt = 1.0 / self.SIM_HZ
+        self._base_dt = 1.0 / self.SIM_HZ
+        self._speed_mult = 1.0
 
         self.setWindowTitle("FH6Telemetry Lab")
         self.resize(960, 520)
@@ -65,9 +94,23 @@ class LabWindow(QMainWindow):
         reset_btn.clicked.connect(self._reset_session)
         toolbar.addWidget(reset_btn)
 
+        toolbar.addWidget(QLabel("Speed"))
+        self._speed_combo = QComboBox()
+        for label, value in _SPEED_OPTIONS:
+            self._speed_combo.addItem(label, value)
+        self._speed_combo.setCurrentIndex(1)
+        self._speed_combo.currentIndexChanged.connect(self._on_speed_changed)
+        toolbar.addWidget(self._speed_combo)
+
+        export_btn = QPushButton("Export CSV")
+        export_btn.clicked.connect(self._export_csv)
+        toolbar.addWidget(export_btn)
+
         toolbar.addStretch()
         self._status = QLabel("Ready")
-        self._status.setStyleSheet(f"color: rgb({theme.TEXT_DIM.red()}, {theme.TEXT_DIM.green()}, {theme.TEXT_DIM.blue()});")
+        self._status.setStyleSheet(
+            f"color: rgb({theme.TEXT_DIM.red()}, {theme.TEXT_DIM.green()}, {theme.TEXT_DIM.blue()});"
+        )
         toolbar.addWidget(self._status)
         layout.addLayout(toolbar)
 
@@ -96,6 +139,11 @@ class LabWindow(QMainWindow):
             self._scenario_engine.set_scenario(sid)
             self._reset_session()
 
+    def _on_speed_changed(self, _index: int) -> None:
+        value = self._speed_combo.currentData()
+        if value:
+            self._speed_mult = float(value)
+
     def _toggle_play(self) -> None:
         if self._running:
             self._running = False
@@ -106,7 +154,9 @@ class LabWindow(QMainWindow):
             self._running = True
             self._sim_timer.start()
             self._play_btn.setText("Pause")
-            self._status.setText(f"Running — {self._scenario_engine.scenario_name}")
+            self._status.setText(
+                f"Running — {self._scenario_engine.scenario_name} @ {self._speed_combo.currentText()}"
+            )
 
     def _reset_session(self) -> None:
         was_running = self._running
@@ -123,9 +173,10 @@ class LabWindow(QMainWindow):
             self._toggle_play()
 
     def _sim_tick(self) -> None:
-        frame = self._scenario_engine.step(self._dt)
+        dt = self._base_dt * self._speed_mult
+        frame = self._scenario_engine.step(dt)
         hud = self._engine.process(frame)
-        self._buffer.append(frame, hud, dt=self._dt)
+        self._buffer.append(frame, hud, dt=dt)
 
     def _refresh_graph(self) -> None:
         samples = self._buffer.samples()
@@ -141,8 +192,28 @@ class LabWindow(QMainWindow):
         last = samples[-1].hud
         unit = "km/h" if self._config.use_metric else "mph"
         top = last.top_speed_kph if self._config.use_metric else last.top_speed_kph * 0.621371
+        lap = f"  |  Lap {last.lap_number}" if last.lap_number > 0 else ""
         self._stats.setText(
             f"Distance: {last.distance_km:.2f} km  |  "
-            f"Top speed: {top:.0f} {unit}  |  "
+            f"Top speed: {top:.0f} {unit}{lap}  |  "
             f"Samples: {self._buffer.count}"
         )
+
+    def _export_csv(self) -> None:
+        samples = self._buffer.samples()
+        if not samples:
+            QMessageBox.information(self, "Export CSV", "No samples to export. Run a simulation first.")
+            return
+        stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        default_name = f"fh6_session_{stamp}.csv"
+        path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Export session CSV",
+            str(Path.cwd() / default_name),
+            "CSV files (*.csv)",
+        )
+        if not path:
+            return
+        target = export_session_csv(samples, path)
+        self._status.setText(f"Exported {len(samples)} rows → {target.name}")
+        QMessageBox.information(self, "Export CSV", f"Saved {len(samples)} samples to:\n{target}")
