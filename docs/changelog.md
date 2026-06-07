@@ -2,6 +2,15 @@
 
 All notable changes to FH6Telemetry are documented here.
 
+## [Unreleased]
+
+### Changed
+- Overlay layout is now a single horizontal strip (~1155×88) instead of a tall
+  multi-row grid, better suited to bottom-of-screen placement during gameplay.
+- Default window position anchors to the **bottom centre** of the primary screen
+  (24 px margin). Saved coordinates from dragging still override the anchor.
+- Tray menu adds **Reset position (bottom centre)**.
+
 ## [0.1.0] — Initial release
 
 ### Added

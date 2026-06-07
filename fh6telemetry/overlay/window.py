@@ -2,7 +2,8 @@
 
 Responsibilities:
 
-* compose the enabled panels into a compact grid;
+* compose the enabled panels into a single horizontal strip anchored to the
+  bottom-centre of the screen;
 * stay on top of the game without stealing focus;
 * toggle Windows click-through (input pass-through) so the overlay does not
   block the game while still being draggable when you want to reposition it;
@@ -20,7 +21,8 @@ from collections.abc import Callable
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QAction, QColor, QIcon, QPainter, QPixmap
 from PySide6.QtWidgets import (
-    QGridLayout,
+    QApplication,
+    QHBoxLayout,
     QMenu,
     QSystemTrayIcon,
     QWidget,
@@ -30,16 +32,16 @@ from ..config import AppConfig
 from ..models import HudState
 from . import widgets
 
-# (panel key, widget class, grid row, col, rowspan, colspan)
+# Left-to-right order for the bottom horizontal strip.
 _LAYOUT = [
-    ("core", widgets.CorePanel, 0, 0, 1, 2),
-    ("gforce", widgets.GForcePanel, 0, 2, 1, 1),
-    ("inputs", widgets.InputsPanel, 1, 0, 1, 1),
-    ("power", widgets.PowerPanel, 1, 1, 1, 1),
-    ("tires", widgets.TiresPanel, 1, 2, 1, 1),
-    ("laps", widgets.LapsPanel, 2, 0, 1, 1),
-    ("performance", widgets.PerformancePanel, 2, 1, 1, 2),
-    ("handling", widgets.HandlingPanel, 3, 0, 1, 3),
+    ("core", widgets.CorePanel),
+    ("inputs", widgets.InputsPanel),
+    ("power", widgets.PowerPanel),
+    ("gforce", widgets.GForcePanel),
+    ("tires", widgets.TiresPanel),
+    ("laps", widgets.LapsPanel),
+    ("performance", widgets.PerformancePanel),
+    ("handling", widgets.HandlingPanel),
 ]
 
 
@@ -70,8 +72,7 @@ class OverlayWindow(QWidget):
 
         self._panels: dict[str, widgets.BasePanel] = {}
         self._build_layout()
-
-        self.move(config.window_x, config.window_y)
+        self._apply_window_position()
 
         # Blink timer drives the shift-light flash and keeps panels live even
         # when telemetry momentarily stops arriving.
@@ -84,16 +85,34 @@ class OverlayWindow(QWidget):
 
     # -- composition ------------------------------------------------------------
     def _build_layout(self) -> None:
-        grid = QGridLayout(self)
-        grid.setContentsMargins(0, 0, 0, 0)
-        grid.setSpacing(widgets.SPACING)
-        for key, cls, row, col, rspan, cspan in _LAYOUT:
+        row = QHBoxLayout(self)
+        row.setContentsMargins(0, 0, 0, 0)
+        row.setSpacing(widgets.SPACING)
+        for key, cls in _LAYOUT:
             if not self._config.panels.get(key, True):
                 continue
             panel = cls()
             self._panels[key] = panel
-            grid.addWidget(panel, row, col, rspan, cspan, Qt.AlignmentFlag.AlignTop)
+            row.addWidget(panel, 0, Qt.AlignmentFlag.AlignBottom)
         self.adjustSize()
+
+    def _apply_window_position(self) -> None:
+        """Place the HUD at the saved coordinates or bottom-centre of the screen."""
+        if self._config.window_x >= 0 and self._config.window_y >= 0:
+            self.move(self._config.window_x, self._config.window_y)
+            return
+        self._position_bottom_center()
+
+    def _position_bottom_center(self) -> None:
+        screen = QApplication.primaryScreen()
+        if screen is None:
+            return
+        geo = screen.availableGeometry()
+        x = geo.x() + (geo.width() - self.width()) // 2
+        y = geo.y() + geo.height() - self.height() - self._config.window_margin_bottom
+        self.move(x, y)
+        self._config.window_x = x
+        self._config.window_y = y
 
     def _build_tray(self) -> QSystemTrayIcon:
         tray = QSystemTrayIcon(self._make_icon(), self)
@@ -119,6 +138,10 @@ class OverlayWindow(QWidget):
         menu.addAction(self._action_metric)
 
         menu.addSeparator()
+        reset_pos = QAction("Reset position (bottom centre)", self)
+        reset_pos.triggered.connect(self._on_reset_position)
+        menu.addAction(reset_pos)
+
         reset = QAction("Reset session", self)
         reset.triggered.connect(lambda: self._on_reset_session())
         menu.addAction(reset)
@@ -167,8 +190,15 @@ class OverlayWindow(QWidget):
 
     # -- runtime controls -------------------------------------------------------
     def show_overlay(self) -> None:
+        self.adjustSize()
+        self._apply_window_position()
         self.show()
         self._apply_click_through(self._config.click_through)
+
+    def _on_reset_position(self) -> None:
+        self._config.window_x = -1
+        self._config.window_y = -1
+        self._position_bottom_center()
 
     def _on_toggle_interactive(self, interactive: bool) -> None:
         self._config.click_through = not interactive

@@ -29,8 +29,11 @@ class AppConfig:
     use_metric: bool = True  # km/h + °C when True, mph + °F when False
 
     # --- Overlay window --------------------------------------------------------
-    window_x: int = 40
-    window_y: int = 40
+    # ``window_x`` / ``window_y`` of ``-1`` anchor the HUD to the screen bottom
+    # centre on launch. After dragging, the saved coordinates override the anchor.
+    window_x: int = -1
+    window_y: int = -1
+    window_margin_bottom: int = 24
     opacity: float = 0.90
     click_through: bool = True  # start in pass-through mode so the game gets input
     locked: bool = False  # when True the overlay cannot be dragged

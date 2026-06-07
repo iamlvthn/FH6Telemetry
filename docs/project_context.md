@@ -85,8 +85,9 @@ default and the simulator's output format.
 - Laps: counter, position, current/last/best, predictive delta to best lap.
 - Performance: 0-100, 0-200, 100-200, ¼-mile, top speed, peak power.
 - Shift advisor: learned optimal upshift RPM + flashing limit light.
-- Overlay UX: click-through toggle, position lock + drag, unit toggle, session
-  reset, persisted window position — all via the system tray.
+- Overlay UX: single horizontal strip anchored to bottom-centre by default,
+  click-through toggle, position lock + drag, reset position, unit toggle,
+  session reset, persisted window position — all via the system tray.
 
 ## Conventions
 

@@ -77,11 +77,14 @@ python -m fh6telemetry --port 5300
 python -m fh6telemetry --imperial      # mph / Fahrenheit
 ```
 
-Right-click the tray icon for runtime controls. To reposition the HUD, untick
-**Interactive (click-through off)**, drag it, then re-enable click-through.
+The overlay opens as a **horizontal strip** along the **bottom centre** of your
+screen. Right-click the tray icon for runtime controls. To reposition the HUD,
+untick **Interactive (click-through off)**, drag it, then re-enable
+click-through. Use **Reset position (bottom centre)** to snap it back.
 
 Window position and preferences are remembered in `config.local.json` in the
-working directory.
+working directory. Set `"window_x": -1, "window_y": -1` to re-enable the
+bottom-centre anchor on next launch.
 
 ## Testing without the game
 
