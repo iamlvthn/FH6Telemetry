@@ -251,11 +251,11 @@ Performance targets:
 - [x] Dual-axis power/RPM graph with gear-shift markers
 - [x] Lap delta + handling balance trace (dual-axis row)
 
-### Phase 4 — Lab UI polish (est. 2 sessions)
-- [ ] Embedded HUD strip + session stats panel
-- [ ] Scenario parameter drawer
-- [ ] CSV replay + A/B session compare (overlay two speed traces)
-- [ ] UDP bridge toggle for overlay integration testing
+### Phase 4 — Lab UI polish *(done)*
+- [x] Embedded HUD strip + session stats panel (left sidebar)
+- [x] Scenario parameter drawer (redline, track length, power scale)
+- [x] CSV replay + A/B session compare (orange overlay on speed chart)
+- [x] UDP bridge toggle for overlay integration testing
 
 ### Phase 5 — Integration & docs
 - [ ] Update `README.md`, `project_context.md`, `changelog.md`
@@ -321,5 +321,5 @@ Performance targets:
 
 ---
 
-*Next action on this branch: Phase 4 — embedded HUD strip, scenario parameter
-drawer, CSV replay, and UDP bridge toggle.*
+*Next action on this branch: Phase 5 — refactor `tools/simulator.py`, update
+docs/screenshots, merge `feature/advanced-sim-viz` → `main`.*

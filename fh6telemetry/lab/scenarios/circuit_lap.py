@@ -6,16 +6,14 @@ import math
 
 from ...models import TelemetryFrame
 from .base import Scenario
+from .config import VehicleConfig
 from .vehicle import VehicleModel
-
-_TRACK_LENGTH_M = 1800.0
-
 
 class CircuitLapScenario(Scenario):
     """Repeated laps with throttle/brake/steer phases to exercise lap analytics."""
 
     def __init__(self) -> None:
-        self._vehicle = VehicleModel(track_length_m=_TRACK_LENGTH_M)
+        self._vehicle = VehicleModel(enable_laps=True)
         self._t = 0.0
 
     @property
@@ -37,3 +35,12 @@ class CircuitLapScenario(Scenario):
         brake = 0.7 if corner < -0.85 else 0.0
         steer = math.sin(self._t * 0.45 + math.pi / 2) * min(1.0, self._vehicle.speed / 30.0)
         return self._vehicle.step(dt, throttle=throttle, brake=brake, steer=steer)
+
+    def supports_laps(self) -> bool:
+        return True
+
+    def get_vehicle_config(self) -> VehicleConfig:
+        return self._vehicle.config
+
+    def set_vehicle_config(self, config: VehicleConfig) -> None:
+        self._vehicle.apply_config(config)

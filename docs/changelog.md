@@ -16,6 +16,8 @@ All notable changes to FH6Telemetry are documented here.
 - **Lab Phase 3:** `GraphWorkspace` with 2×2 charts (speed, power/RPM, g-force,
   tyres), delta/balance row, timeline scrubber, follow-live toggle, dual-axis
   graphs and shift markers.
+- **Lab Phase 4:** embedded HUD strip, session stats sidebar, scenario parameter
+  drawer, CSV load/replay, A/B speed compare overlay, UDP bridge to overlay.
 
 ### Changed
 - Overlay layout is now a single horizontal strip (~1155×88) instead of a tall

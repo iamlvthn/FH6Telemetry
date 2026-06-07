@@ -6,6 +6,7 @@ import math
 
 from ...models import TelemetryFrame
 from .base import Scenario
+from .config import VehicleConfig
 from .vehicle import VehicleModel
 
 
@@ -34,3 +35,9 @@ class DriftSweepScenario(Scenario):
         steer = math.sin(self._t * 0.9) * 0.95
         brake = 0.35 if math.sin(self._t * 2.0) > 0.85 else 0.0
         return self._vehicle.step(dt, throttle=throttle, brake=brake, steer=steer)
+
+    def get_vehicle_config(self) -> VehicleConfig:
+        return self._vehicle.config
+
+    def set_vehicle_config(self, config: VehicleConfig) -> None:
+        self._vehicle.apply_config(config)

@@ -5,6 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 
 from ...models import TelemetryFrame
+from .config import VehicleConfig
 
 
 class Scenario(ABC):
@@ -27,3 +28,12 @@ class Scenario(ABC):
     @abstractmethod
     def step(self, dt: float) -> TelemetryFrame:
         """Advance the simulation by ``dt`` seconds and return the new frame."""
+
+    def supports_laps(self) -> bool:
+        return False
+
+    def get_vehicle_config(self) -> VehicleConfig:
+        return VehicleConfig()
+
+    def set_vehicle_config(self, config: VehicleConfig) -> None:
+        pass

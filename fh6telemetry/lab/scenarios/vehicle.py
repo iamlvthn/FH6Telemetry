@@ -2,17 +2,18 @@
 
 from __future__ import annotations
 
-import math
-
 from ...models import TelemetryFrame
 from . import physics as p
+from .config import VehicleConfig
 
 
 class VehicleModel:
     """Steps throttle/brake/steer inputs into plausible telemetry frames."""
 
-    def __init__(self, *, track_length_m: float | None = None) -> None:
-        self._track_length = track_length_m
+    def __init__(self, *, config: VehicleConfig | None = None, enable_laps: bool = False) -> None:
+        self._config = config or VehicleConfig()
+        self._enable_laps = enable_laps
+        self._track_length = self._config.track_length_m if enable_laps else None
         self._t = 0.0
         self._speed = 0.0
         self._gear = 1
@@ -27,6 +28,15 @@ class VehicleModel:
     @property
     def speed(self) -> float:
         return self._speed
+
+    @property
+    def config(self) -> VehicleConfig:
+        return self._config
+
+    def apply_config(self, config: VehicleConfig) -> None:
+        self._config = config
+        if self._enable_laps:
+            self._track_length = config.track_length_m
 
     def reset(self) -> None:
         self._t = 0.0
@@ -48,16 +58,20 @@ class VehicleModel:
         throttle = max(0.0, min(1.0, throttle))
         brake = max(0.0, min(1.0, brake))
         steer = max(-1.0, min(1.0, steer))
+        redline = self._config.redline_rpm
+        scale = self._config.power_scale
 
-        rpm = p.rpm_for_speed(self._speed, self._gear)
-        accel = p.longitudinal_accel(self._speed, throttle, brake, rpm, self._gear)
+        rpm = p.rpm_for_speed(self._speed, self._gear, redline=redline)
+        accel = p.longitudinal_accel(
+            self._speed, throttle, brake, rpm, self._gear, power_scale=scale
+        )
         self._speed = max(0.0, self._speed + accel * dt)
         self._distance += self._speed * dt
-        self._update_gear()
+        self._update_gear(redline)
         self._update_laps()
 
-        rpm = p.rpm_for_speed(self._speed, self._gear)
-        torque = p.engine_torque_nm(rpm) * throttle
+        rpm = p.rpm_for_speed(self._speed, self._gear, redline=redline)
+        torque = p.engine_torque_nm(rpm, power_scale=scale) * throttle
         power = p.power_from_torque(torque, rpm)
         long_g = accel / 9.80665
         lat_g = steer * min(1.4, self._speed / 30.0)
@@ -69,7 +83,7 @@ class VehicleModel:
         return TelemetryFrame(
             is_race_on=1,
             timestamp_ms=int(self._t * 1000) & 0xFFFFFFFF,
-            engine_max_rpm=p.REDLINE_RPM,
+            engine_max_rpm=redline,
             engine_idle_rpm=p.IDLE_RPM,
             current_engine_rpm=rpm,
             accel_x=lat_g * 9.80665,
@@ -112,12 +126,12 @@ class VehicleModel:
             has_dash=True,
         )
 
-    def _update_gear(self) -> None:
+    def _update_gear(self, redline: float) -> None:
         if self._shift_cooldown > 0:
             return
-        rpm = p.rpm_for_speed(self._speed, self._gear)
+        rpm = p.rpm_for_speed(self._speed, self._gear, redline=redline)
         shifted = False
-        if rpm > p.REDLINE_RPM * p.SHIFT_UP_FRACTION and self._gear < len(p.GEAR_RATIOS):
+        if rpm > redline * p.SHIFT_UP_FRACTION and self._gear < len(p.GEAR_RATIOS):
             self._gear += 1
             shifted = True
         elif rpm < p.IDLE_RPM * p.SHIFT_DOWN_IDLE_MULT and self._gear > 1:

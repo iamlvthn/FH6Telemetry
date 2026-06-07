@@ -96,10 +96,12 @@ python -m fh6telemetry.lab
 ```
 
 Click **Play** to run a scenario (*Standing launch*, *Circuit lap*, or *Drift
-sweep*). The Lab shows a **2×2 graph grid** (speed, power/RPM with shift
-markers, g-force, tyre temps) plus lap delta and handling balance. Use the
-timeline scrubber to rewind, or enable **Follow live** to track the latest data.
-Adjust simulation speed (0.5×–4×) and export sessions to CSV.
+sweep*). The Lab shows a live **HUD strip**, session stats, and a **2×2 graph
+grid** (speed, power/RPM with shift markers, g-force, tyre temps) plus lap delta
+and handling balance. **Load CSV** replays exported sessions; **Load compare**
+overlays a second speed trace. Enable **UDP bridge** to stream telemetry to the
+in-game overlay on `127.0.0.1:5300`. Tune redline, track length and power in the
+sidebar parameter drawer.
 See `docs/plans/advanced-simulation-visualization.md` for the full roadmap.
 
 ## Testing without the game

@@ -49,3 +49,6 @@ class ScenarioEngine:
         if self._current is None:
             raise RuntimeError("no scenario selected")
         return self._current.step(dt)
+
+    def current(self) -> Scenario | None:
+        return self._current

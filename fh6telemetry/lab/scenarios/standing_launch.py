@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from ...models import TelemetryFrame
 from .base import Scenario
+from .config import VehicleConfig
 from .vehicle import VehicleModel
 
 
@@ -26,3 +27,9 @@ class StandingLaunchScenario(Scenario):
 
     def step(self, dt: float) -> TelemetryFrame:
         return self._vehicle.step(dt, throttle=1.0, brake=0.0, steer=0.0)
+
+    def get_vehicle_config(self) -> VehicleConfig:
+        return self._vehicle.config
+
+    def set_vehicle_config(self, config: VehicleConfig) -> None:
+        self._vehicle.apply_config(config)

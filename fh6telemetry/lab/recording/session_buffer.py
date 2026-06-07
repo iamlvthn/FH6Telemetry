@@ -32,6 +32,18 @@ class SessionBuffer:
         self._samples.clear()
         self._elapsed = 0.0
 
+    def load_samples(self, samples: Sequence[TimeSeriesSample]) -> None:
+        """Replace the buffer with a pre-built session (CSV import / replay)."""
+        self._samples.clear()
+        for sample in samples:
+            self._samples.append(sample)
+        self._elapsed = samples[-1].t if samples else 0.0
+
+    def append_sample(self, sample: TimeSeriesSample) -> None:
+        """Append an existing sample (replay animation)."""
+        self._samples.append(sample)
+        self._elapsed = sample.t
+
     def append(self, frame: TelemetryFrame, hud: HudState, *, dt: float) -> TimeSeriesSample:
         """Record a new sample, advancing the session clock by ``dt``."""
         self._elapsed += dt

@@ -57,6 +57,10 @@ parser.parse()  ──►  TelemetryFrame  ──►  AnalyticsEngine.process() 
 | `lab/scenarios/` | `ScenarioEngine` + drive scenarios | `standing_launch` in Phase 1 |
 | `lab/recording/` | `SessionBuffer` ring buffer | 60 s @ 60 Hz default |
 | `lab/graphs/` | `TimeSeriesGraph`, `GraphWorkspace` | Dual-axis, markers, 2×2 grid + scrubber |
+| `lab/ui/` | HUD strip, stats panel, params drawer | Reuses overlay panels |
+| `lab/recording/import_csv.py` | CSV session import | Replay + compare |
+| `lab/replay.py` | `ReplayPlayer` | Animate loaded sessions |
+| `lab/udp_bridge.py` | `UdpBridge` | Stream to overlay for integration tests |
 | `analytics/history.py` | Channel extraction for graphs | speed, rpm, power, g, tyres… |
 
 ## Forza "Data Out" packet formats

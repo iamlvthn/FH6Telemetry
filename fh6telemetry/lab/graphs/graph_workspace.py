@@ -138,7 +138,12 @@ class GraphWorkspace(QWidget):
         self._slider.setValue(0)
         self._time_label.setText("0.0 s")
 
-    def refresh(self, samples: Sequence[TimeSeriesSample]) -> None:
+    def refresh(
+        self,
+        samples: Sequence[TimeSeriesSample],
+        *,
+        compare_samples: Sequence[TimeSeriesSample] | None = None,
+    ) -> None:
         if not samples:
             self.clear()
             return
@@ -148,6 +153,9 @@ class GraphWorkspace(QWidget):
 
         xs, ys = extract_channel(samples, "speed", metric=metric)
         self._speed.set_series("speed", xs, ys, theme.ACCENT)
+        if compare_samples:
+            cx, cy = extract_channel(compare_samples, "speed", metric=metric)
+            self._speed.set_series("compare", cx, cy, theme.OVERSTEER)
 
         xs_p, ys_p = extract_channel(samples, "power_hp")
         xs_r, ys_r = extract_channel(samples, "rpm")
