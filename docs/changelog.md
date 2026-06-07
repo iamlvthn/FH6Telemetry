@@ -4,6 +4,11 @@ All notable changes to FH6Telemetry are documented here.
 
 ## [Unreleased]
 
+### Added
+- Development plan for the Advanced Simulation & Visualization Lab on branch
+  `feature/advanced-sim-viz` (`docs/plans/advanced-simulation-visualization.md`).
+- Scaffold package `fh6telemetry.lab` (placeholder entry point).
+
 ### Changed
 - Overlay layout is now a single horizontal strip (~1155×88) instead of a tall
   multi-row grid, better suited to bottom-of-screen placement during gameplay.
