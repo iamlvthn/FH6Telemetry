@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 
+from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import (
     QComboBox,
     QFileDialog,
@@ -17,13 +18,10 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from PySide6.QtCore import QTimer
-
 from ..analytics import AnalyticsEngine
-from ..analytics.history import extract_channel
 from ..config import AppConfig
 from ..overlay import theme
-from .graphs import TimeSeriesGraph
+from .graphs import GraphWorkspace
 from .recording import SessionBuffer, export_session_csv
 from .scenarios import (
     CircuitLapScenario,
@@ -51,7 +49,7 @@ def _default_scenarios() -> ScenarioEngine:
 
 
 class LabWindow(QMainWindow):
-    """Desktop workbench: run scenarios and visualise speed over time."""
+    """Desktop workbench: run scenarios and visualise telemetry over time."""
 
     SIM_HZ = 60.0
     GRAPH_HZ = 30.0
@@ -67,7 +65,7 @@ class LabWindow(QMainWindow):
         self._speed_mult = 1.0
 
         self.setWindowTitle("FH6Telemetry Lab")
-        self.resize(960, 520)
+        self.resize(1280, 820)
         self._build_ui()
         self._wire_timers()
 
@@ -114,11 +112,8 @@ class LabWindow(QMainWindow):
         toolbar.addWidget(self._status)
         layout.addLayout(toolbar)
 
-        unit = "km/h" if self._config.use_metric else "mph"
-        self._graph = TimeSeriesGraph(title=f"Speed ({unit})")
-        self._graph.set_y_unit(unit)
-        self._graph.set_follow_live(True, window_seconds=30.0)
-        layout.addWidget(self._graph, stretch=1)
+        self._workspace = GraphWorkspace(metric=self._config.use_metric)
+        layout.addWidget(self._workspace, stretch=1)
 
         self._stats = QLabel("Distance: 0.0 km  |  Top speed: 0  |  Samples: 0")
         layout.addWidget(self._stats)
@@ -130,7 +125,7 @@ class LabWindow(QMainWindow):
 
         self._graph_timer = QTimer(self)
         self._graph_timer.setInterval(int(1000 / self.GRAPH_HZ))
-        self._graph_timer.timeout.connect(self._refresh_graph)
+        self._graph_timer.timeout.connect(self._refresh_graphs)
         self._graph_timer.start()
 
     def _on_scenario_changed(self, _index: int) -> None:
@@ -165,8 +160,7 @@ class LabWindow(QMainWindow):
         self._scenario_engine.reset()
         self._engine.reset_session()
         self._buffer.clear()
-        self._graph.clear_series()
-        self._refresh_graph()
+        self._workspace.clear()
         self._update_stats()
         self._status.setText("Reset")
         if was_running:
@@ -178,10 +172,8 @@ class LabWindow(QMainWindow):
         hud = self._engine.process(frame)
         self._buffer.append(frame, hud, dt=dt)
 
-    def _refresh_graph(self) -> None:
-        samples = self._buffer.samples()
-        xs, ys = extract_channel(samples, "speed", metric=self._config.use_metric)
-        self._graph.set_series("speed", xs, ys, theme.ACCENT)
+    def _refresh_graphs(self) -> None:
+        self._workspace.refresh(self._buffer.samples())
         self._update_stats()
 
     def _update_stats(self) -> None:
@@ -193,9 +185,12 @@ class LabWindow(QMainWindow):
         unit = "km/h" if self._config.use_metric else "mph"
         top = last.top_speed_kph if self._config.use_metric else last.top_speed_kph * 0.621371
         lap = f"  |  Lap {last.lap_number}" if last.lap_number > 0 else ""
+        delta = ""
+        if last.delta_valid:
+            delta = f"  |  Delta {last.delta:+.3f}s"
         self._stats.setText(
             f"Distance: {last.distance_km:.2f} km  |  "
-            f"Top speed: {top:.0f} {unit}{lap}  |  "
+            f"Top speed: {top:.0f} {unit}{lap}{delta}  |  "
             f"Samples: {self._buffer.count}"
         )
 

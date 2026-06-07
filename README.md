@@ -96,7 +96,10 @@ python -m fh6telemetry.lab
 ```
 
 Click **Play** to run a scenario (*Standing launch*, *Circuit lap*, or *Drift
-sweep*), adjust simulation speed (0.5×–4×), and export the session to CSV.
+sweep*). The Lab shows a **2×2 graph grid** (speed, power/RPM with shift
+markers, g-force, tyre temps) plus lap delta and handling balance. Use the
+timeline scrubber to rewind, or enable **Follow live** to track the latest data.
+Adjust simulation speed (0.5×–4×) and export sessions to CSV.
 See `docs/plans/advanced-simulation-visualization.md` for the full roadmap.
 
 ## Testing without the game

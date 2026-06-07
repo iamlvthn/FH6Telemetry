@@ -13,6 +13,9 @@ All notable changes to FH6Telemetry are documented here.
 - `TimeSeriesSample` model, `analytics/history.py` channel extractors.
 - **Lab Phase 2:** `VehicleModel` with torque curve, `circuit_lap` and
   `drift_sweep` scenarios, simulation speed multiplier, CSV session export.
+- **Lab Phase 3:** `GraphWorkspace` with 2×2 charts (speed, power/RPM, g-force,
+  tyres), delta/balance row, timeline scrubber, follow-live toggle, dual-axis
+  graphs and shift markers.
 
 ### Changed
 - Overlay layout is now a single horizontal strip (~1155×88) instead of a tall

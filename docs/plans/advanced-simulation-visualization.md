@@ -245,11 +245,11 @@ Performance targets:
 - [x] Direct-feed path into `AnalyticsEngine` (Lab, no UDP)
 - [x] CSV export (`export_session_csv`)
 
-### Phase 3 — Graph suite (est. 2–3 sessions)
-- [ ] Graph grid with 4 default charts
-- [ ] Timeline scrubber + follow-live toggle
-- [ ] Dual-axis power/RPM graph with shift markers
-- [ ] Lap delta + handling traces
+### Phase 3 — Graph suite *(done)*
+- [x] Graph grid with 4 default charts (speed, power/RPM, g-force, tyres)
+- [x] Timeline scrubber + follow-live toggle + window duration (15–120 s)
+- [x] Dual-axis power/RPM graph with gear-shift markers
+- [x] Lap delta + handling balance trace (dual-axis row)
 
 ### Phase 4 — Lab UI polish (est. 2 sessions)
 - [ ] Embedded HUD strip + session stats panel
@@ -321,5 +321,5 @@ Performance targets:
 
 ---
 
-*Next action on this branch: Phase 3 — graph grid (speed, power/RPM, g-force,
-tyre temps), timeline scrubber, and dual-axis power/RPM chart.*
+*Next action on this branch: Phase 4 — embedded HUD strip, scenario parameter
+drawer, CSV replay, and UDP bridge toggle.*

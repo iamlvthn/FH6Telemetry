@@ -71,6 +71,18 @@ def extract_channel(
     return xs, ys
 
 
+def extract_shift_markers(samples: Sequence[TimeSeriesSample]) -> list[tuple[float, int]]:
+    """Return ``(time_s, new_gear)`` for each upshift/downshift in the session."""
+    markers: list[tuple[float, int]] = []
+    prev_gear: int | None = None
+    for sample in samples:
+        gear = sample.hud.gear
+        if prev_gear is not None and gear != prev_gear and gear > 0:
+            markers.append((sample.t, gear))
+        prev_gear = gear
+    return markers
+
+
 def downsample_for_display(
     xs: Sequence[float],
     ys: Sequence[float],

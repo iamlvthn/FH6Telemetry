@@ -56,7 +56,7 @@ parser.parse()  ──►  TelemetryFrame  ──►  AnalyticsEngine.process() 
 | `lab/` | Offline analysis workbench | Simulation + time-series graphs (Phase 1+) |
 | `lab/scenarios/` | `ScenarioEngine` + drive scenarios | `standing_launch` in Phase 1 |
 | `lab/recording/` | `SessionBuffer` ring buffer | 60 s @ 60 Hz default |
-| `lab/graphs/` | `TimeSeriesGraph` widgets | Custom-painted, live follow |
+| `lab/graphs/` | `TimeSeriesGraph`, `GraphWorkspace` | Dual-axis, markers, 2×2 grid + scrubber |
 | `analytics/history.py` | Channel extraction for graphs | speed, rpm, power, g, tyres… |
 
 ## Forza "Data Out" packet formats
